@@ -159,7 +159,7 @@ def copy_dirs(src_path, target_path):
 
 class ResponseContent:
 
-    def __init__(self,code,message,data=None,total=None,page=None):
+    def __init__(self,code,message,data=None,total=None,page=None,messageCode=None):
         self.code = code
         self.data = data
 
@@ -168,6 +168,9 @@ class ResponseContent:
 
         if page:
             self.currentPage = page
+
+        if messageCode:
+            self.messageCode = messageCode
 
         self.message = message
 

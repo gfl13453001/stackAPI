@@ -23,7 +23,7 @@ from rest_framework_simplejwt.views import (TokenObtainPairView, TokenViewBase)
 # from common.NotePageNumberPagination import LargeResultsSetPagination
 from common.serializerset.public import testSerializerModels
 from common.serializerset.tokenSerializers import MyTokenObtainPairSerializer
-from common.serializerset.user import (CreateUserSerializerModels)
+from common.serializerset.user import (CreateUserSerializerModels, UserInfoSerializerModels)
 from common.authenticationclass import JWTUserToken
 from common.main import ResponseContent
 from apps.user.models import User, Filesave
@@ -99,6 +99,7 @@ class UserRegisterViewSet(ViewSet):
         # 添加用户
         user_data = request.data
         user_json = CreateUserSerializerModels(data=user_data)  # 必须明确data
+
         if user_json.is_valid():  # 校验
 
             if User.objects.filter(username=user_data["username"]):
@@ -107,6 +108,7 @@ class UserRegisterViewSet(ViewSet):
                 )
 
             else:
+                print(user_json)
                 user_json.save()  # 保存
                 return Response(
                     ResponseContent(code=0, message="注册成功").__dict__
@@ -298,7 +300,7 @@ class MyAccountCenterViewSet(ViewSet):
     )
     def list(self,request, *args,**kwargs):
         if request.version == 'v1':
-            serializer_class = CreateUserSerializerModels(User.objects.filter(id=request.user).first())
+            serializer_class = UserInfoSerializerModels(User.objects.filter(id=request.user).first())
             return Response(ResponseContent(code=0, data=serializer_class.data,message='').__dict__)
         else:
             return Response(ResponseContent(code=1, message="接口版本不正确").__dict__)
@@ -784,7 +786,6 @@ class MyTokenRefreshView(TokenViewBase):
             serializer_class = TokenRefreshSerializer
             return
         else:
-
             return
 
 

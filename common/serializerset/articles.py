@@ -3,6 +3,7 @@
 
 # authors:guanfl
 # 2021/9/13
+import datetime
 import time
 
 from rest_framework import serializers
@@ -74,10 +75,10 @@ class ArticleSerializerModels(serializers.ModelSerializer):
     description = serializers.CharField(required=False,max_length=40, label='描述',error_messages={
         "min_length":"至少2字符","max_length":"最大只能8字符"
     })
-    content = serializers.CharField(required=False,min_length=4,max_length=5000, label='描述',error_messages={
+    content = serializers.CharField(required=False,min_length=4,label='描述',error_messages={
         "min_length":"至少2字符","max_length":"最大只能5000字符"
     })
-    createTime = serializers.CharField(required=False, max_length=10, label='创建时间',default=int(time.time()))
+    createTime = serializers.CharField(required=False, max_length=10, label='创建时间',default=datetime.datetime.now())
     updateTime = serializers.CharField(required=False, max_length=10, label='修改时间')
     deleteTime = serializers.CharField(required=False, max_length=10, label='删除时间')
     sort = serializers.IntegerField(required=False,label='排序',default=0)
@@ -88,11 +89,11 @@ class ArticleSerializerModels(serializers.ModelSerializer):
     # 	0 为显示、1为不显示	显示状态
     create_by = serializers.CharField(required=False, max_length=20, label='创建人',)
     check = serializers.IntegerField(required=False,  label='审核',default=2)
-    img = serializers.CharField(required=True, label='封面',)
-    userid = serializers.CharField(required=False, label='作者',)
-    classify = serializers.CharField(required=True,error_messages={
-
-    }, label='分类',)
+    # img = serializers.CharField(required=True, label='封面',)
+    # userid = serializers.CharField(required=False, label='作者',)
+    # classify = serializers.CharField(required=True,error_messages={
+    #
+    # }, label='分类',)
 
 
     class Meta:

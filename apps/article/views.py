@@ -18,7 +18,7 @@ from common.serializerset.articles import ClassifySerializerModels, ArticleSeria
 # from common.serializerset.system import NavSerializerModels
 
 
-class ArticleClassifyViewSet(ViewSet):
+class  ArticleClassifyViewSet(ViewSet):
 
     """
     文章模块
@@ -127,16 +127,16 @@ class CreateArticleViewSet(ViewSet):
             data = article_json.save()
             if data == 1:
                 return Response(
-                    ResponseContent(code=1, message="作者id、分类id或者封面id不存在、无法发布文章").__dict__
+                    ResponseContent(code=1, message="作者id、分类id或者封面id不存在、无法发布文章",messageCode=40001).__dict__
                 )
             else:
                 return Response(
-                    ResponseContent(code=0, message="文章发布成功").__dict__
+                    ResponseContent(code=0, message="文章发布成功",messageCode=20001).__dict__
                 )
         else:
 
             return Response(
-                ResponseContent(code=0, message=article_json.errors).__dict__
+                ResponseContent(code=0, message=article_json.error_messages,messageCode=40002).__dict__
             )
 
 

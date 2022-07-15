@@ -42,11 +42,8 @@ class User(AbstractUser):
     # USERNAME_FIELD = "username"
     # REQUIRED_FIELDS = "username"
     nickname = models.CharField(null=True, max_length=20, verbose_name='昵称')
-    user_sex_choics = (
-        (0, "男"),
-        (1, "女"),
-    )
-    sex = models.IntegerField(choices=user_sex_choics, verbose_name='性别', default=0)
+
+    sex = models.IntegerField(null=True,verbose_name='性别', default=0)
     # 0保密 1男 2女 default 默认值
     age = models.IntegerField(null=True, verbose_name='年龄', default=0)
     phone = models.CharField(max_length=11, verbose_name='电话')

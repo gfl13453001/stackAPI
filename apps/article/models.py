@@ -35,16 +35,16 @@ class Classify(models.Model):
 
 class Article(models.Model):
     id = models.CharField(primary_key=True, max_length=10, verbose_name='id')
-    title = models.CharField( max_length=8, verbose_name='文章标题')
-    description = models.CharField(null=True, max_length=40, verbose_name='描述')
-    content = models.CharField(max_length=5000, verbose_name='内容')
-    createTime = models.CharField(null=True, max_length=10, verbose_name='创建时间')
-    updateTime = models.CharField(null=True, max_length=10, verbose_name='修改时间')
-    deleteTime = models.CharField(null=True, max_length=10, verbose_name='删除时间')
+    title = models.CharField( max_length=20, verbose_name='文章标题')
+    description = models.CharField(null=True, max_length=80, verbose_name='描述')
+    content = models.TextField(verbose_name='内容')
+    createTime = models.DateTimeField(null=True, max_length=10, verbose_name='创建时间')
+    updateTime = models.DateTimeField(null=True, max_length=10, verbose_name='修改时间')
+    deleteTime = models.DateTimeField(null=True, max_length=10, verbose_name='删除时间')
     type = models.IntegerField(null=True,default=0,verbose_name='类型')
     # 0为文章分类
     # views = models.IntegerField(null=True,default=0,verbose_name='预览数')
-    sort = models.IntegerField(verbose_name='排序',default=0)
+    sort = models.IntegerField(null=True,verbose_name='排序',default=0)
     isDelete = models.IntegerField(null=True, default=0, verbose_name='删除状态')
     # 0 为不删除、1为删除	逻辑删除标记
     isShow = models.IntegerField(null=True, default=1, verbose_name='显示状态')

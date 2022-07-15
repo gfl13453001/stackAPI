@@ -26,12 +26,13 @@ SECRET_KEY = 'django-insecure-^(wgibct^+zeowp7^q+3b^jimti^&6*@2*m&8x%tfliooycius
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
 
 INSTALLED_APPS = [
+    # "corsheaders"
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -42,14 +43,15 @@ INSTALLED_APPS = [
     "apps.public",
     "apps.user",
     "apps.article",
-    "corsheaders"
 ]
 
 MIDDLEWARE = [
-    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    # 'corsheaders.middleware.CorsMiddleware'
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
+    # 'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -79,8 +81,29 @@ WSGI_APPLICATION = 'stackNoteAPI.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
+#
+# # 数据库配置
+# DATABASES = {
+#     'default': {
+#         # 数据库引擎（是mysql还是oracle等）
+#         'ENGINE': 'django.db.backends.mysql',
+#         # 数据库的名字
+#         'NAME': 'stack_note',
+#         # 连接mysql数据库的用户名
+#         'USER': 'root',
+#         # 连接mysql数据库的密码
+#         'PASSWORD': 'gfl13453001',
+#         'HOST': '120.77.152.21',
+#         # mysql数据库的端口号
+#         'PORT': '3306',
+#         'TEST': {
+#             'CHARSET': 'utf8',
+#             'COLLATION': 'utf8_general_ci'
+#         }
+#
+#     }
+# }
 
-# 数据库配置
 DATABASES = {
     'default': {
         # 数据库引擎（是mysql还是oracle等）
@@ -90,19 +113,18 @@ DATABASES = {
         # 连接mysql数据库的用户名
         'USER': 'root',
         # 连接mysql数据库的密码
-        'PASSWORD': 'gfl13453001',
-        'HOST': '120.77.152.21',
+        'PASSWORD': 'gfl123456',
+        'HOST': "127.0.0.1",
         # mysql数据库的端口号
         'PORT': '3306',
-        'TEST': {
-            'CHARSET': 'utf8',
-            'COLLATION': 'utf8_general_ci'
-        }
+        'OPTIONS': {'charset': 'utf8mb4'},
+        # 'TEST': {
+        #     'CHARSET': 'utf8',
+        #     'COLLATION': 'utf8_general_ci'
+        # }
 
     }
 }
-
-
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
 
@@ -334,8 +356,8 @@ CORS_ALLOW_CREDENTIALS = True
 CORS_ORIGIN_ALLOW_ALL = True
 # 添加白名单
 CORS_ORIGIN_WHITELIST = (
- 'http://127.0.0.1:8080',
- 'http://localhost:8080',  # 凡是出现在白名单中的域名，都可以访问后端接口
+ '*',
+  # 凡是出现在白名单中的域名，都可以访问后端接口
 )
 # 添加跨域请求允许的请求方式
 CORS_ALLOW_METHODS = (
@@ -347,17 +369,18 @@ CORS_ALLOW_METHODS = (
     'PUT',
     'VIEW',
 )
+CORS_ALLOW_HEADERS = ('*')
 # 添加跨域请求允许的请求头类型
-CORS_ALLOW_HEADERS = (
-    'XMLHttpRequest',
-    'X_FILENAME',
-    'accept-encoding',
-    'authorization',
-    'content-type',
-    'dnt',
-    'origin',
-    'user-agent',
-    'x-csrftoken',
-    'x-requested-with',
-    'Pragma',
-)
+# CORS_ALLOW_HEADERS = (
+#     'XMLHttpRequest',
+#     'X_FILENAME',
+#     'accept-encoding',
+#     'authorization',
+#     'content-type',
+#     'dnt',
+#     'origin',
+#     'user-agent',
+#     'x-csrftoken',
+#     'x-requested-with',
+#     'Pragma',
+# )
