@@ -14,7 +14,10 @@ from rest_framework.viewsets import ViewSet
 from apps.article.models import Classify, Article
 from common.authenticationclass import JWTUserToken
 from common.main import ResponseContent
-from common.serializerset.articles import ClassifySerializerModels, ArticleSerializerModels
+from common.serializerset.articles import ClassifySerializerModels, ArticleSerializerModels, \
+    ArticleSerializerDetailModels, ArticleListSerializerModels
+
+
 # from common.serializerset.system import NavSerializerModels
 
 
@@ -134,9 +137,8 @@ class CreateArticleViewSet(ViewSet):
                     ResponseContent(code=0, message="文章发布成功",messageCode=20001).__dict__
                 )
         else:
-
             return Response(
-                ResponseContent(code=0, message=article_json.error_messages,messageCode=40002).__dict__
+                ResponseContent(code=0, message=article_json.errors,messageCode=40002).__dict__
             )
 
 
@@ -170,7 +172,7 @@ class CreateArticleViewSet(ViewSet):
         # 进行给这个api备注、swagger ui上显示的内容
         operation_summary='编辑文章'
     )
-    def partial_update(self,request, *args,**kwargs):
+    def update(self,request, *args,**kwargs):
         """
         """
         if request.version == 'v1':
@@ -212,6 +214,33 @@ class CreateArticleViewSet(ViewSet):
             if Article.objects.filter(id=kwargs["pk"]):
                 Article.objects.filter(id=kwargs["pk"]).update(isDelete=1,deleteTime=int(time.time()))
                 return Response(ResponseContent(code=0, message="数据删除成功").__dict__)
+            else:
+                return Response(ResponseContent(code=1, message="数据不存在").__dict__)
+
+        return Response(ResponseContent(code=1, message="接口版本不正确").__dict__)
+    token = openapi.Parameter("token", openapi.IN_HEADER, description="token",
+                              type=openapi.TYPE_STRING, required=True, )
+
+
+    @swagger_auto_schema(
+        operation_description="查询文章详情",
+        manual_parameters=[token],
+        # 配置接口的请求body、post请求数据是保存在body中的
+        # 接口响应的具体内容
+        responses={202: 'id not found'},
+        # 进行给这个api备注、swagger ui上显示的内容
+        operation_summary='查询文章详情'
+    )
+    def retrieve(self,request, *args,**kwargs):
+        """
+        查询文章详情
+        """
+
+        if request.version == 'v1':
+            if Article.objects.filter(id=kwargs["pk"]):
+
+                get_data = ArticleListSerializerModels(Article.objects.filter(id=kwargs["pk"],isDelete=0).first())
+                return Response(ResponseContent(code=0, message="查询成功",data=get_data.data).__dict__)
             else:
                 return Response(ResponseContent(code=1, message="数据不存在").__dict__)
 
@@ -262,8 +291,8 @@ class GetArticleViewSet(ViewSet):
         operation_summary='获取文章详情'
     )
     def retrieve(self,request, *args,**kwargs):
-        print(1)
-        serializer_class = ArticleSerializerModels(Article.objects.filter(id=kwargs["pk"],isDelete=0).first())
+        print(kwargs["pk"])
+        serializer_class = ArticleListSerializerModels(Article.objects.filter(id=kwargs["pk"],isDelete=0).first(),many=True)
         return Response(serializer_class.data)
 
 
@@ -294,7 +323,7 @@ class ClassifyGetArticleViewSet(ViewSet):
         if request.version == 'v1':
             # 处理版本v1的业务逻辑
             # 返回所有数据集
-            serializer  = ArticleSerializerModels(Article.objects.filter(isDelete=0,isShow=1,classify_id=request_data["id"]), many=True)
+            serializer  = ArticleListSerializerModels(Article.objects.filter(isDelete=0,isShow=1,classify_id=request_data["id"]), many=True)
 
             context = ResponseContent(code=0, data=serializer .data, message="数据获取成功").__dict__
             return Response(context)

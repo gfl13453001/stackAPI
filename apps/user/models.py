@@ -7,7 +7,6 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
-
 # Create your models here.
 
 
@@ -79,5 +78,7 @@ class User(AbstractUser):
         # 表备注
         verbose_name_plural = "用户表"
         verbose_name = verbose_name_plural
+
+
 
 

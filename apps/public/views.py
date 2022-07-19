@@ -1,7 +1,6 @@
 import os
 
 from django.http import QueryDict
-from django.shortcuts import render
 
 # Create your views here.
 from drf_yasg import openapi
@@ -16,9 +15,10 @@ from apps.public.models import Nav, Banner
 from apps.user.models import Filesave
 from common.libs.qianniu import upload
 from common.main import ResponseContent, getID
+from common.serializerset.articles import ArticleListSerializerModels
 from common.serializerset.public import NavSerializerModels, BannerSerializerModels, UploadFIleSerializerModels
 from stackNoteAPI.settings.dev import OSS_FILEPATH
-
+from apps.article.models import Article
 
 class MenuNavigationViewSet(ViewSet):
 
@@ -107,7 +107,7 @@ class MenuNavigationViewSet(ViewSet):
 
            )
 
-class BannerViewSet(ViewSet):
+class IndexDataViewSet(ViewSet):
 
     """
     首页banner
@@ -122,19 +122,23 @@ class BannerViewSet(ViewSet):
 
 
     @swagger_auto_schema(
-        operation_description="获取banner列表",
+        operation_description="获取数据",
         manual_parameters=[],
         # 配置接口的请求body、post请求数据是保存在body中的
         # 接口响应的具体内容
         responses={202: 'id not found'},
         # 进行给这个api备注、swagger ui上显示的内容
-        operation_summary='获取banner列表'
+        operation_summary='获取数据'
     )
     def list(self,request, *args,**kwargs):
         serializer_class = BannerSerializerModels(Banner.objects.filter(isDelete=0,isShow=1),many=True)
+        serializer_hotspot = ArticleListSerializerModels(Article.objects.filter(isDelete=0,isShow=1,hotspot=1),many=True)
+        indexcon = {}
+        indexcon["banner"] = serializer_class.data
+        # 热门
+        indexcon["hotspot"] = serializer_hotspot.data
         return Response(
-            ResponseContent(code=0, data= serializer_class.data,message="").__dict__
-
+            ResponseContent(code=0, data=indexcon,message="").__dict__
            )
 
 
