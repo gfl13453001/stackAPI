@@ -2,7 +2,6 @@ import os
 
 from django.http import QueryDict
 
-# Create your views here.
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.parsers import MultiPartParser
@@ -13,6 +12,7 @@ from rest_framework.viewsets import ViewSet
 
 from apps.public.models import Nav, Banner
 from apps.user.models import Filesave
+from common.authenticationclass import JWTUserToken
 from common.libs.qianniu import upload
 from common.main import ResponseContent, getID
 from common.serializerset.articles import ArticleListSerializerModels
@@ -142,10 +142,6 @@ class IndexDataViewSet(ViewSet):
            )
 
 
-
-
-
-
 class UploadFileView(ViewSet):
 
     """
@@ -158,23 +154,20 @@ class UploadFileView(ViewSet):
     # 权限控制器
     # permission_classes = [IsAuthenticated]
     # 认证器
-    # authentication_classes = [JWTUserToken]
+    authentication_classes = [JWTUserToken]
     # 版本控制器
     versioning_class = URLPathVersioning
 
     # 解决swagger 无法处理上传文件的解析器
     parser_classes = (MultiPartParser,)
 
-    # # token
-    # token = openapi.Parameter("token", openapi.IN_HEADER, description="token",
-    #                           type=openapi.TYPE_STRING, required=True, )
-    #
-
 
     file = openapi.Parameter("file", in_=openapi.IN_FORM, description="file",
                                   type=openapi.TYPE_FILE,)
+    token = openapi.Parameter("token", in_=openapi.IN_HEADER, description="TOKEN",
+                                  type=openapi.TYPE_FILE,)
     @swagger_auto_schema(
-        manual_parameters=[file],
+        manual_parameters=[file,token],
         # 接口响应的具体内容
         responses={202: 'id not found'},
         # 进行给这个api备注、swagger ui上显示的内容

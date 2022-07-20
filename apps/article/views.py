@@ -15,7 +15,7 @@ from apps.article.models import Classify, Article
 from common.authenticationclass import JWTUserToken
 from common.main import ResponseContent
 from common.serializerset.articles import ClassifySerializerModels, ArticleSerializerModels, \
-    ArticleSerializerDetailModels, ArticleListSerializerModels
+    ArticleSerializerDetailModels, ArticleListSerializerModels, ArticleSerializerEditModels
 
 
 # from common.serializerset.system import NavSerializerModels
@@ -163,7 +163,6 @@ class CreateArticleViewSet(ViewSet):
                 'type': openapi.Schema(type=openapi.TYPE_NUMBER, description="分类类型",default=0),
                 'isShow': openapi.Schema(type=openapi.TYPE_NUMBER, description="是否显示",),
                 'img': openapi.Schema(type=openapi.TYPE_STRING, description="封面id",),
-                'user': openapi.Schema(type=openapi.TYPE_STRING, description="用户id",),
                 'classify': openapi.Schema(type=openapi.TYPE_STRING, description="分类id",),
             },
         ),
@@ -178,19 +177,20 @@ class CreateArticleViewSet(ViewSet):
         if request.version == 'v1':
             article_data = request.data
             try:
-                article_json = ArticleSerializerModels(instance=Article.objects.get(id=kwargs["pk"]),data=article_data)
+                article_json = ArticleSerializerEditModels(Article.objects.get(id=kwargs["pk"]),data=article_data)
                 if article_json.is_valid():
                     data = article_json.save()
-                    if data == 1:
-                        return Response(ResponseContent(code=1, message="修改异常").__dict__)
 
-                    return Response(ResponseContent(code=0, message="修改成功").__dict__)
+                    if data == 1:
+                        return Response(ResponseContent(code=1, message="修改异常",messageCode=40002).__dict__)
+
+                    return Response(ResponseContent(code=0, message="修改成功",messageCode=20001).__dict__)
                 else:
-                    return Response(ResponseContent(code=0, message=article_json.errors).__dict__)
+                    return Response(ResponseContent(code=0, message=article_json.errors,messageCode=40004).__dict__)
             except:
-                return Response(ResponseContent(code=1, message="该数据不存在").__dict__)
+                return Response(ResponseContent(code=1, message="该数据不存在",messageCode=40004).__dict__)
         else:
-            return Response(ResponseContent(code=1, message="接口版本不正确").__dict__)
+            return Response(ResponseContent(code=1, message="接口版本不正确",messageCode=40005).__dict__)
 
     token = openapi.Parameter("token", openapi.IN_HEADER, description="token",
                               type=openapi.TYPE_STRING, required=True, )
@@ -269,7 +269,6 @@ class GetArticleViewSet(ViewSet):
         operation_summary='获取文章列表'
     )
     def list(self, request, *args,**kwargs):
-        print(1)
         if request.version == 'v1':
             # 处理版本v1的业务逻辑
             # 返回所有数据集
@@ -376,7 +375,7 @@ class MyArticleViewSet(ViewSet):
         if request.version == 'v1':
             # 处理版本v1的业务逻辑
             # 返回所有数据集
-            serializer  = ArticleSerializerModels(Article.objects.filter(user_id=request_data["userid"],isDelete=0,isShow=1), many=True)
+            serializer  = ArticleListSerializerModels(Article.objects.filter(user_id=request_data["userid"],isDelete=0,isShow=1), many=True)
 
             context = ResponseContent(code=0, data=serializer .data, message="数据获取成功").__dict__
             return Response(context)

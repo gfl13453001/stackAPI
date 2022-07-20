@@ -129,24 +129,27 @@ class ArticleSerializerModels(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         print("原值",instance,"修改值",validated_data)
+        validated_data["img_id"] = validated_data["img"]
+        # validated_data["classify_id"] = validated_data["classify"]
+        # validated_data["user_id"] = validated_data["userid"]
 
-        try:
-            instance.title = validated_data.get('title', instance.title)
-            instance.description = validated_data.get('description', instance.description)
-            instance.content = validated_data.get('content', instance.content)
-            instance.updateTime = int(time.time())
-            instance.sort = validated_data.get('sort', instance.sort)
-            instance.type = validated_data.get('type', instance.type)
-            instance.isDelete = validated_data.get('isDelete', instance.isDelete)
-            instance.isShow = validated_data.get('isShow', instance.isShow)
-            instance.check = validated_data.get('check', instance.check)
-            instance.img = validated_data.get('img', instance.img)
-            instance.user = validated_data.get('user', instance.user)
-            instance.classify = validated_data.get('classify', instance.classify)
-            instance.save()
-            return validated_data
-        except:
-            return 1
+        # try:
+        instance.title = validated_data.get('title', instance.title)
+        instance.description = validated_data.get('description', instance.description)
+        instance.content = validated_data.get('content', instance.content)
+        instance.updateTime = int(time.time())
+        instance.sort = validated_data.get('sort', instance.sort)
+        instance.type = validated_data.get('type', instance.type)
+        instance.isDelete = validated_data.get('isDelete', instance.isDelete)
+        instance.isShow = validated_data.get('isShow', instance.isShow)
+        instance.check = validated_data.get('check', instance.check)
+        instance.img_id = validated_data.get('img', instance.img_id)
+        instance.user = validated_data.get('user', instance.user)
+        instance.classify = validated_data.get('classify', instance.classify)
+        instance.save()
+        return validated_data
+        # except:
+        #     return 1
 
 
 
@@ -240,6 +243,48 @@ class ArticleSerializerDetailModels(serializers.ModelSerializer):
         model = Article
         depth = 2
         fields = '__all__'
+
+
+
+class ArticleSerializerEditModels(serializers.ModelSerializer):
+    # 外键需要使用PrimaryKeyRelatedField
+    img = serializers.PrimaryKeyRelatedField(required=False, label='封面',queryset=Filesave.objects.all())
+    userid = serializers.PrimaryKeyRelatedField(required=False, label='作者',queryset=User.objects.all())
+    classify = serializers.PrimaryKeyRelatedField(required=False,error_messages={
+
+    }, label='分类',queryset=Classify.objects.all())
+
+
+    class Meta:
+        model = Article
+        depth = 2
+        exclude = ("id",)
+
+
+
+    def update(self, instance, validated_data):
+        print("原值",instance.img,"修改值",validated_data)
+        # validated_data["img_id"] = validated_data["img"]
+        # validated_data["classify_id"] = validated_data["classify"]
+        # validated_data["user_id"] = validated_data["userid"]
+
+        try:
+            instance.title = validated_data.get('title', instance.title)
+            instance.description = validated_data.get('description', instance.description)
+            instance.content = validated_data.get('content', instance.content)
+            instance.sort = validated_data.get('sort', instance.sort)
+            instance.type = validated_data.get('type', instance.type)
+            instance.isDelete = validated_data.get('isDelete', instance.isDelete)
+            instance.isShow = validated_data.get('isShow', instance.isShow)
+            instance.check = validated_data.get('check', instance.check)
+            instance.img = validated_data.get('img', instance.img)
+            instance.user = validated_data.get('user', instance.user)
+            instance.updateTime = datetime.datetime.now()
+            instance.classify = validated_data.get('classify', instance.classify)
+            instance.save()
+            return validated_data
+        except:
+            return 1
 
 
 
